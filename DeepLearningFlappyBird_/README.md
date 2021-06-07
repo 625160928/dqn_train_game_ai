@@ -1,3 +1,10 @@
+首先！！！！这块代码的源码来源是
+https://github.com/yenchenlin1994/DeepLearningFlappyBird.git
+这里！！！！
+源码具体以他为准
+而我则是在这块代码的基础上进行二次开发
+
+
 # Using Deep Q-Network to Learn How To Play Flappy Bird
 
 <img src="./images/flappy_bird_demp.gif" width="250">
