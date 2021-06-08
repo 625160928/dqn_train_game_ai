@@ -1,2 +1,2 @@
-model_checkpoint_path: "E:\\work\\github_folder\\pygame_test0\\DQN_point_game\\Saver\\cnnsaver.ckpt-0"
-all_model_checkpoint_paths: "E:\\work\\github_folder\\pygame_test0\\DQN_point_game\\Saver\\cnnsaver.ckpt-0"
+model_checkpoint_path: "E:\\PYTHONPROJECT\\dqn_train_game_ai\\DQN_point_game\\Saver\\cnnsaver.ckpt-0"
+all_model_checkpoint_paths: "E:\\PYTHONPROJECT\\dqn_train_game_ai\\DQN_point_game\\Saver\\cnnsaver.ckpt-0"
