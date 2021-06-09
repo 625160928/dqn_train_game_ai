@@ -54,7 +54,7 @@ swfbase_url = 'http://sda.4399.com/4399swf'
 def download_game(url):
     #获取网页源代码
     game_page = requests.get(url).text
-    game_page.encoding = 'gb2312'
+    # game_page.encoding = 'gb2312'
 
     #找到网页中含有游戏标题的字符
     start =game_page.find("game_title=")
@@ -76,17 +76,23 @@ def download_game(url):
     #4399游戏本体的网址是由两部分组成，基址+偏移量
     #我们之前找的都是偏移量，接上基址就是正确的网址
     src_url=swfbase_url + game_page[p1:p2]
-    #获取本体
-    src = requests.get( src_url).content
 
-    #保存
-    open( "./swf/"+ game_title+ ".swf", "wb" ).write( src )
+    file_type='.'+game_page[p1:p2].split('/')[-1].split('.')[-1]
+    # print(file_type)
+    if file_type=='.swf':
+        #获取本体
+        src = requests.get( src_url).content
+        print(game_title)
+        #保存
+        open( "./"+ game_title+ file_type, "wb" ).write( src )
+    else:
+        print("只有swf文件才能下载")
 
 
 if __name__ == '__main__':
     # main()
 
-    url='http://www.4399.com/flash/91723.htm'
+    url='http://www.4399.com/flash/18920.htm'
 
     download_game(url)
 
