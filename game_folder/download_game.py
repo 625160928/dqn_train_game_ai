@@ -84,15 +84,16 @@ def download_game(url):
         src = requests.get( src_url).content
         print(game_title)
         #保存
-        open( "./"+ game_title+ file_type, "wb" ).write( src )
+        open( "./game_src/"+ game_title+ file_type, "wb" ).write( src )
     else:
         print("只有swf文件才能下载")
 
 
 if __name__ == '__main__':
     # main()
+    #森林冰火人2选关版  http://www.4399.com/flash/175700.htm#search3-9af1
 
-    url='http://www.4399.com/flash/18920.htm'
+    url='http://www.4399.com/flash/175700.htm#search3-9af1'
 
     download_game(url)
 
