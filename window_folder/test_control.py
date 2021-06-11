@@ -133,6 +133,11 @@ def get_child_windows(parent):
     win32gui.EnumChildWindows(parent, lambda hwnd, param: param.append(hwnd),  hwndChildList)
     return hwndChildList
 
+def winEnumHandler(hwnd, ctx):
+    if win32gui.IsWindowVisible(hwnd):
+        print(hex(hwnd), win32gui.GetWindowText(hwnd))
+
+
 if __name__ == "__main__":
     # 需要和目标窗口同一权限，游戏窗口通常是管理员权限
     import sys
@@ -141,35 +146,47 @@ if __name__ == "__main__":
         windll.shell32.ShellExecuteW(
             None, "runas", sys.executable, __file__, None, 1)
 
+    import win32gui
+
+
+    # win32gui.EnumWindows(winEnumHandler, None)
 
     import cv2
-    window_name='FlashPlay'
+    # window_name='FlashPlay'
+    window_name='森林冰火人大冒险2选关版小游戏,在线玩,4399小游戏 - 视频播放器'
 
     handle = windll.user32.FindWindowW(None,window_name)
     print(handle)
-    print(get_child_windows(handle))
-    # 控制角色向前移动两秒
-    # key_down(handle, 'd')
-    # time.sleep(2)
-    # key_up(handle, 'd')
+    son=get_child_windows(handle)
+    print(son)
+    if handle!=0:
+        # 控制角色向前移动两秒
+        # key_down(handle, 'd')
+        # time.sleep(2)
+        # key_up(handle, 'd')
 
-    # win32api.keybd_event(13,0,0,0)
-    # win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
-    # win32gui.SendMessage(handle, WM_KEYDOWN, 'D', 0)
-    count=0
-    w2hd=win32gui.FindWindowEx(handle,None,None,None)
-    import time
-    start_time=time.time()
-    while(count<2):
-        count+=1
-        # win32gui.InSendMessage()
-        # win32gui.ReplyMessage(0)
-        win32gui.SetForegroundWindow(w2hd)
-        win32api.keybd_event(68,0,0,0)
-        time.sleep(1)
-        win32gui.SetForegroundWindow(w2hd)
-        win32api.keybd_event(68,0,win32con.KEYEVENTF_KEYUP,0)  #释放按键
-
-        # print(win32gui.PostMessage(handle, win32con.WM_KEYDOWN, 0x44, 10))
-
-        # print(win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0))
+        # win32api.keybd_event(13,0,0,0)
+        # win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
+        # win32gui.SendMessage(handle, WM_KEYDOWN, 'D', 0)
+        count=0
+        w2hd=win32gui.FindWindowEx(handle,None,None,None)
+        import time
+        start_time=time.time()
+        while(count<1000):
+            count+=1
+            # win32gui.InSendMessage()
+            # win32gui.ReplyMessage(0)
+            # win32gui.SetForegroundWindow(w2hd)
+            # win32api.keybd_event(68,0,0,0)
+            # time.sleep(1)
+            # win32gui.SetForegroundWindow(w2hd)
+            # win32api.keybd_event(68,0,win32con.KEYEVENTF_KEYUP,0)  #释放按键
+            #
+            # print(win32gui.PostMessage(handle, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10))
+            #
+            # print(win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0))
+            for i in son:
+                a1=win32gui.PostMessage(i, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10)
+                a2=win32api.SendMessage(i, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
+                # print(a1)
+                # print(a2)
