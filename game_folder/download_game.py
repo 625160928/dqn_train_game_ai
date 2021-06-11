@@ -55,7 +55,8 @@ def download_game(url):
     #获取网页源代码
     game_page = requests.get(url).text
     # game_page.encoding = 'gb2312'
-
+    if not os.path.exists('./game_src'):
+        os.mkdir(r'./game_src')
     #找到网页中含有游戏标题的字符
     start =game_page.find("game_title=")
     #标记标题起始位置

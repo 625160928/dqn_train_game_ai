@@ -121,7 +121,17 @@ def key_up(handle: HWND, key: str):
     wparam = vk_code
     lparam = (scan_code << 16) | 0XC0000001
     PostMessageW(handle, WM_KEYUP, wparam, lparam)
-
+#parent为父窗口句柄id
+def get_child_windows(parent):
+    '''
+    获得parent的所有子窗口句柄
+     返回子窗口句柄列表
+     '''
+    if not parent:
+        return
+    hwndChildList = []
+    win32gui.EnumChildWindows(parent, lambda hwnd, param: param.append(hwnd),  hwndChildList)
+    return hwndChildList
 
 if __name__ == "__main__":
     # 需要和目标窗口同一权限，游戏窗口通常是管理员权限
@@ -137,6 +147,7 @@ if __name__ == "__main__":
 
     handle = windll.user32.FindWindowW(None,window_name)
     print(handle)
+    print(get_child_windows(handle))
     # 控制角色向前移动两秒
     # key_down(handle, 'd')
     # time.sleep(2)
@@ -149,7 +160,7 @@ if __name__ == "__main__":
     w2hd=win32gui.FindWindowEx(handle,None,None,None)
     import time
     start_time=time.time()
-    while(count<20):
+    while(count<2):
         count+=1
         # win32gui.InSendMessage()
         # win32gui.ReplyMessage(0)
