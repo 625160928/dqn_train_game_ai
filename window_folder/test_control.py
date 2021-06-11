@@ -152,8 +152,8 @@ if __name__ == "__main__":
     # win32gui.EnumWindows(winEnumHandler, None)
 
     import cv2
-    # window_name='FlashPlay'
-    window_name='森林冰火人大冒险2选关版小游戏,在线玩,4399小游戏 - 视频播放器'
+    window_name='FlashPlay'
+    # window_name='森林冰火人大冒险2选关版小游戏,在线玩,4399小游戏 - 视频播放器'
 
     handle = windll.user32.FindWindowW(None,window_name)
     print(handle)
@@ -174,6 +174,8 @@ if __name__ == "__main__":
         start_time=time.time()
         while(count<1000):
             count+=1
+            # win32gui.PostMessage(handle, win32con.WM_CLOSE, 0, 0)
+
             # win32gui.InSendMessage()
             # win32gui.ReplyMessage(0)
             # win32gui.SetForegroundWindow(w2hd)
@@ -182,11 +184,16 @@ if __name__ == "__main__":
             # win32gui.SetForegroundWindow(w2hd)
             # win32api.keybd_event(68,0,win32con.KEYEVENTF_KEYUP,0)  #释放按键
             #
-            # print(win32gui.PostMessage(handle, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10))
-            #
-            # print(win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0))
+
+            a1 = win32gui.PostMessage(handle, win32con.WM_KEYDOWN, win32con.VK_RIGHT, 10)
+            a2 = win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
+            win32api.PostMessage(handle, win32con.WM_KEYDOWN, ord('D'), 0)
+            win32api.PostMessage(handle, win32con.WM_CHAR, ord('D'), 0)
             for i in son:
                 a1=win32gui.PostMessage(i, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10)
                 a2=win32api.SendMessage(i, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
+                win32api.PostMessage(i, win32con.WM_KEYDOWN, ord('D'), 0)
+                win32api.PostMessage(i, win32con.WM_CHAR, ord('D'), 0)
+
                 # print(a1)
                 # print(a2)
