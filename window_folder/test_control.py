@@ -154,42 +154,52 @@ if __name__ == "__main__":
     print(handle)
     son=get_child_windows(handle)
     print(son)
-    if handle!=0:
-        # 控制角色向前移动两秒
-        # key_down(handle, 'd')
-        # time.sleep(2)
-        # key_up(handle, 'd')
+    print('useless',son[0],handle)
+    print('class name ',win32gui.GetClassName(son[0]),win32gui.GetClassName(handle))
+    print('useful',son[1],son[2])
+    print('class name ',win32gui.GetClassName(son[1]),win32gui.GetClassName(son[2]))
 
-        # win32api.keybd_event(13,0,0,0)
-        # win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
-        # win32gui.SendMessage(handle, WM_KEYDOWN, 'D', 0)
-        count=0
-        w2hd=win32gui.FindWindowEx(handle,None,None,None)
-        import time
-        start_time=time.time()
-        while(count<1000):
-            count+=1
-            # win32gui.PostMessage(handle, win32con.WM_CLOSE, 0, 0)
-
-            # win32gui.InSendMessage()
-            # win32gui.ReplyMessage(0)
-            # win32gui.SetForegroundWindow(w2hd)
-            # win32api.keybd_event(68,0,0,0)
-            # time.sleep(1)
-            # win32gui.SetForegroundWindow(w2hd)
-            # win32api.keybd_event(68,0,win32con.KEYEVENTF_KEYUP,0)  #释放按键
-            #
-
-            a1 = win32gui.PostMessage(handle, win32con.WM_KEYDOWN, win32con.VK_RIGHT, 10)
-            a2 = win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
-            win32api.PostMessage(handle, win32con.WM_KEYDOWN, ord('D'), 0)
-            win32api.PostMessage(handle, win32con.WM_CHAR, ord('D'), 0)
-
-            for i in son:
-                a1=win32gui.PostMessage(i, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10)
-                a2=win32api.SendMessage(i, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
-                win32api.PostMessage(i, win32con.WM_KEYDOWN, ord('D'), 0)
-                win32api.PostMessage(i, win32con.WM_CHAR, ord('D'), 0)
-
-                # print(a1)
-                # print(a2)
+#
+    # if handle!=0:
+    #     # 控制角色向前移动两秒
+    #     # key_down(handle, 'd')
+    #     # time.sleep(2)
+    #     # key_up(handle, 'd')
+    #
+    #     # win32api.keybd_event(13,0,0,0)
+    #     # win32api.keybd_event(13,0,win32con.KEYEVENTF_KEYUP,0)
+    #     # win32gui.SendMessage(handle, WM_KEYDOWN, 'D', 0)
+    #     count=0
+    #     w2hd=win32gui.FindWindowEx(handle,None,None,None)
+    #     import time
+    #     start_time=time.time()
+    #     while(count<1000):
+    #         count+=1
+    #         # win32gui.PostMessage(handle, win32con.WM_CLOSE, 0, 0)
+    #
+    #         # win32gui.InSendMessage()
+    #         # win32gui.ReplyMessage(0)
+    #         # win32gui.SetForegroundWindow(w2hd)
+    #         # win32api.keybd_event(68,0,0,0)
+    #         # time.sleep(1)
+    #         win32gui.SetForegroundWindow(w2hd)
+    #         # win32api.keybd_event(68,0,win32con.KEYEVENTF_KEYUP,0)  #释放按键
+    #
+    #
+    #         # a1 = win32gui.PostMessage(handle, win32con.WM_KEYDOWN, win32con.VK_RIGHT, 10)
+    #         # a2 = win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
+    #         # win32api.PostMessage(handle, win32con.WM_KEYDOWN, ord('D'), 0)
+    #         # win32api.PostMessage(handle, win32con.WM_CHAR, ord('D'), 0)
+    #         # key_down(handle,'d')
+    #         # key_down(handle,'D')
+    #         # for i in range(len(son)):
+    #         #
+    #         #     # key_down(i,'d')
+    #         #     # key_down(i,'D')
+    #         #     # a1=win32gui.PostMessage(i, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10)
+    #         #     # a2=win32api.SendMessage(i, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
+    #         #     win32api.PostMessage(son[2], win32con.WM_KEYDOWN, ord('D'), 0)
+    #         #     win32api.PostMessage(son[2], win32con.WM_CHAR, ord('D'), 0)
+    #         #     a=1
+    #         #     # print(a1)
+    #         #     # print(a2)
