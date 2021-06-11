@@ -5,6 +5,7 @@ import time
 
 import win32api
 import win32con
+import sys
 import win32gui
 
 PostMessageW = windll.user32.PostMessageW
@@ -121,6 +122,7 @@ def key_up(handle: HWND, key: str):
     wparam = vk_code
     lparam = (scan_code << 16) | 0XC0000001
     PostMessageW(handle, WM_KEYUP, wparam, lparam)
+
 #parent为父窗口句柄id
 def get_child_windows(parent):
     '''
@@ -133,25 +135,18 @@ def get_child_windows(parent):
     win32gui.EnumChildWindows(parent, lambda hwnd, param: param.append(hwnd),  hwndChildList)
     return hwndChildList
 
-def winEnumHandler(hwnd, ctx):
-    if win32gui.IsWindowVisible(hwnd):
-        print(hex(hwnd), win32gui.GetWindowText(hwnd))
 
 
 if __name__ == "__main__":
     # 需要和目标窗口同一权限，游戏窗口通常是管理员权限
-    import sys
-    if not windll.shell32.IsUserAnAdmin():
-        # 不是管理员就提权
-        windll.shell32.ShellExecuteW(
-            None, "runas", sys.executable, __file__, None, 1)
 
-    import win32gui
+    # if not windll.shell32.IsUserAnAdmin():
+    #     # 不是管理员就提权
+    #     windll.shell32.ShellExecuteW(
+    #         None, "runas", sys.executable, __file__, None, 1)
 
 
-    # win32gui.EnumWindows(winEnumHandler, None)
 
-    import cv2
     window_name='FlashPlay'
     # window_name='森林冰火人大冒险2选关版小游戏,在线玩,4399小游戏 - 视频播放器'
 
@@ -189,6 +184,7 @@ if __name__ == "__main__":
             a2 = win32api.SendMessage(handle, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)
             win32api.PostMessage(handle, win32con.WM_KEYDOWN, ord('D'), 0)
             win32api.PostMessage(handle, win32con.WM_CHAR, ord('D'), 0)
+
             for i in son:
                 a1=win32gui.PostMessage(i, win32con.WM_KEYDOWN,  win32con.VK_RIGHT, 10)
                 a2=win32api.SendMessage(i, win32con.WM_NCMBUTTONDOWN, win32con.VK_RIGHT, 0)

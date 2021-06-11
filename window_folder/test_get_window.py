@@ -88,8 +88,17 @@ def test():
     plt.imshow(img)
     plt.show()
 
+#获取窗口名字
+def winEnumHandler(hwnd,non):
+    if win32gui.IsWindowVisible(hwnd):
+        name=win32gui.GetWindowText(hwnd)
+        if name!='':
+            print(hex(hwnd),name )
+
 if __name__ == '__main__':
-    get_win()
+
+    win32gui.EnumWindows(winEnumHandler,None)
+    # get_win()
     # test()
 
 
