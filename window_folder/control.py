@@ -9,6 +9,7 @@ class Player():
     def __init__(self,player,window_name,time_sleep=0.1):
         self.time_sleep=time_sleep
         self.__handle = windll.user32.FindWindowW(None, window_name)
+
         self.__w2hd=win32gui.FindWindowEx(self.__handle, None, None, None)
         hwndChildList = []
         win32gui.EnumChildWindows(self.__handle, lambda hwnd, param: param.append(hwnd),  hwndChildList)

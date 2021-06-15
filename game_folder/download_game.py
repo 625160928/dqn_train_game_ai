@@ -91,7 +91,7 @@ def download_game(url):
 
 
 if __name__ == '__main__':
-    # main()
+
     #森林冰火人2选关版  http://www.4399.com/flash/175700.htm#search3-9af1
 
     url='http://www.4399.com/flash/175700.htm#search3-9af1'

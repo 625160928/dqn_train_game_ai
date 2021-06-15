@@ -124,15 +124,15 @@ def key_up(handle: HWND, key: str):
     PostMessageW(handle, WM_KEYUP, wparam, lparam)
 
 #parent为父窗口句柄id
-def get_child_windows(parent):
+def get_child_windows(handle):
     '''
     获得parent的所有子窗口句柄
      返回子窗口句柄列表
      '''
-    if not parent:
+    if not handle:
         return
     hwndChildList = []
-    win32gui.EnumChildWindows(parent, lambda hwnd, param: param.append(hwnd),  hwndChildList)
+    win32gui.EnumChildWindows(handle, lambda hwnd, param: param.append(hwnd), hwndChildList)
     return hwndChildList
 
 
