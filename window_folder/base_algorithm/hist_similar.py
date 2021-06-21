@@ -19,11 +19,16 @@ def calc_similar(li, ri):
     calc_sim = hist_similar(li.histogram(), ri.histogram())
     return calc_sim
 
-def similar(img1,img2):
+def path_similar(img1, img2):
     image1 = Image.open(img1)
     image1 = make_regalur_image(image1)
     image2 = Image.open(img2)
     image2 = make_regalur_image(image2)
+    return calc_similar(image1, image2)
+
+def pic_similar(img1, img2):
+    image1 = make_regalur_image(img1)
+    image2 = make_regalur_image(img2)
     return calc_similar(image1, image2)
 
 

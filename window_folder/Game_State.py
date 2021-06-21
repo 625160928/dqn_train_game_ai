@@ -4,6 +4,10 @@ import numpy as np
 from get_win import window_capture
 from base_algorithm import cos_similar
 from PIL import Image
+import  base_algorithm
+from base_algorithm import hist_similar
+from base_algorithm import three_hist
+
 
 SELECT=0
 FAIL=-1
@@ -110,31 +114,14 @@ class game_state():
     def __check_game_state_equal(self,arr1,arr2):
         pic1=Image.fromarray(np.uint8(arr1))
         pic2=Image.fromarray(np.uint8(arr2))
-        print(type(pic1),type(pic2))
-        # plt.imshow(pic1)
-        # plt.imshow(pic2)
-        # plt.show()
+        print("------------")
+        print('cos ',base_algorithm.cos_similar.image_similarity_vectors_via_numpy(pic1,pic2))
+        print('hist ',hist_similar.pic_similar(pic1,pic2))
+        print("three hist ",three_hist.classify_hist_with_split(pic1,pic2)[0])
         return False
 
     def get_game_state(self):
         game_state_pic=self.__env.capture_part(self.__reccognise_x,self.__reccognise_y,self.__reccognise_h,self.__reccognise_w)
-        # plt.imshow(game_state_pic)
-        # plt.show()
-
-
-        # game_state_arr=np.array(game_state_pic)
-
-        # from base_algorithm import ahash
-        # img2=cv2.cvtColor(np.uint8(self.ingame), cv2.COLOR_GRAY2BGR)
-        # img1 = cv2.cvtColor(game_state_arr, cv2.COLOR_GRAY2BGR)
-        # print(ahash.ahash_sim(img2,img1))
-        #
-
-        # pic_ingame=Image.fromarray(np.uint8(self.ingame))
-        # plt.imshow(pic_ingame)
-        # plt.show()
-        # # print(self.ingame==game_state_arr)
-        # print(cos_similar.image_similarity_vectors_via_numpy(pic_ingame,game_state_pic))
 
 
         if self.__check_game_state_equal(game_state_pic,self.select):
