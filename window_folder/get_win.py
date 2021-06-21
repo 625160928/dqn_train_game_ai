@@ -77,7 +77,8 @@ class window_capture():
 
         img_arr=np.frombuffer(buffer, dtype=np.uint8).reshape(height, width, 4)
         # image_resize = Image.fromarray(img_arr).resize((self.__reshape_width,self.__reshape_height))
-
+        # plt.show(img_arr)
+        # plt.show()
         return img_arr
 
 
