@@ -1,5 +1,5 @@
 from sklearn import metrics as mr
-from scipy.misc import imread
+# from scipy.misc import imread
 import numpy as np
 
 def similar(img1,img2):
@@ -13,6 +13,16 @@ def similar(img1,img2):
     # print(img2.shape)
     # print(img1.shape)
     return  mr.mutual_info_score(img1, img2)
+
+def similar_by_pic(img1,img2):
+    img2 = np.resize(img2, (img1.shape[0], img1.shape[1], img1.shape[2]))
+
+    img1 = np.reshape(img1, -1)
+    img2 = np.reshape(img2, -1)
+    # print(img2.shape)
+    # print(img1.shape)
+    return  mr.mutual_info_score(img1, img2)
+
 
 def main():
 

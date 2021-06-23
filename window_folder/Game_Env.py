@@ -30,23 +30,7 @@ class game_env():
         game_state_pic=self.__env.capture_part(self.__reccognise_x,self.__reccognise_y,self.__reccognise_h,self.__reccognise_w)
         game_state_arr=np.array(game_state_pic)
 
-
-
-        if (game_state_arr==self.__game_state.select).all():
-            return "game select"
-        if (game_state_arr==self.__game_state.fail).all():
-            return "game fail"
-        if (game_state_arr==self.__game_state.ingame).all():
-            return "game ingame"
-        if (game_state_arr==self.__game_state.menu).all():
-            return "game menu"
-        if (game_state_arr==self.__game_state.win).all():
-            return "game win"
-
-        # plt.imshow(game_state_pic)
-        # plt.show()
-        # print(game_state_pic.shape)
-        return "process"
+        return game_state_arr
 
     def restart(self):
         a=1
@@ -54,7 +38,15 @@ class game_env():
 
 
 
-
+def print_game_state(state):
+    arr=np.array(state)
+    print('np.array([')
+    for i in range(len(arr)):
+        print('[',end='')
+        for j in range(len(arr[i])):
+            print('[',arr[i][j][0],',',arr[i][j][1],',',arr[i][j][2],',',arr[i][j][3],'],',end='')
+        print('],')
+    print('])')
 
 if __name__ == "__main__":
     window_name='FlashPlay'
@@ -74,17 +66,9 @@ if __name__ == "__main__":
     #     print(state)
 
     state=game_env0.get_game_state()
-    print(state)
-
-    # arr=np.array(state)
-    # print('np.array([')
-    # for i in range(len(arr)):
-    #     print('[',end='')
-    #     for j in range(len(arr[i])):
-    #         print('[',arr[i][j][0],',',arr[i][j][1],',',arr[i][j][2],',',arr[i][j][3],'],',end='')
-    #     print('],')
-    # print('])')
-
+    # print(state)
+    # print("------------------")
+    print(print_game_state(state))
 
 
     # print(np.array(state))
