@@ -1,6 +1,13 @@
+import time
+from ctypes import windll
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import win32api
+import win32con
+import win32gui
+
 from get_win import window_capture
 from PIL import Image
 
@@ -209,7 +216,22 @@ class game_state():
         self.state_list['menu']=self.menu
         self.state_list['win']=self.win
 
+        self.__handle=windll.user32.FindWindowW(None, window_name)
+        hwndChildList = []
+        win32gui.EnumChildWindows(self.__handle, lambda hwnd, param: param.append(hwnd),  hwndChildList)
 
+        for i in hwndChildList:
+            if win32gui.GetClassName(i)=='Chrome_WidgetWin_0' :
+                self.__handle=i
+                break
+            if win32gui.GetClassName(i)=='Chrome_RenderWidgetHostHWND' :
+                self.__handle=i
+                break
+
+    def doClick(self, cx, cy):
+        long_position = win32api.MAKELONG(cx, cy)  # 模拟鼠标指针 传送到指定坐标
+        win32api.SendMessage(self.__handle, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position)  # 模拟鼠标按下
+        win32api.SendMessage(self.__handle, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)  # 模拟鼠标弹起
 
     def __get_state_simulate_score(self,arr1,arr2):
         pic1=Image.fromarray(np.uint8(arr1))
@@ -222,8 +244,8 @@ class game_state():
         score_dict=dict()
         for i in self.state_list:
             # print(i,self.state_list[i])
-            plt.imshow(self.state_list[i])
-            plt.show()
+            # plt.imshow(self.state_list[i])
+            # plt.show()
             score_dict[i]=self.__get_state_simulate_score(game_state_pic,self.state_list[i])
 
         max_score=max( score_dict.values())
@@ -235,17 +257,25 @@ class game_state():
 
     #target_state 只有ingame menu select 三种
     #now_state 则是五种全齐 ingame menu select win fail
-    def change_state(self,target_state):
+    def change_state(self,target_state,level=None,retry=True):
         now_state=self.get_game_state()
         if now_state==target_state:
             return True
-
         if now_state=="menu":
+            x=510
+            y=474
+            self.doClick(x,y)
 
 
+        now_state=self.get_game_state()
+        if now_state!=target_state:
+            if retry ==False:
+                return False
+            else:
+                time.sleep(0.1)
+                self.change_state(target_state,retry=False)
+        return True
 
-
-        return False
 
     def restart(self,level=None):
         return
@@ -263,5 +293,6 @@ if __name__ == "__main__":
     reccognise=[reccognise_x,reccognise_y,reccognise_h,reccognise_w]
     game_env0=game_state(window_name,reccognise,resize_h,resize_w)
 
-    print(game_env0.get_game_state())
+    # print(game_env0.get_game_state())
+    game_env0.change_state("select")
 

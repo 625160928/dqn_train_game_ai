@@ -135,6 +135,23 @@ def get_child_windows(handle):
     win32gui.EnumChildWindows(handle, lambda hwnd, param: param.append(hwnd), hwndChildList)
     return hwndChildList
 
+def find_shubiao(hwnd1):
+    windowRec = win32gui.GetWindowRect(hwnd1) # 目标子句柄窗口的坐标
+
+    while True:
+
+        tempt = win32api.GetCursorPos() # 记录鼠标所处位置的坐标
+
+        x = tempt[0]-windowRec[0] # 计算相对x坐标
+
+        y = tempt[1]-windowRec[1] # 计算相对y坐标
+
+        print(x,y)
+
+def doClick(hwnd,cx, cy):
+    long_position = win32api.MAKELONG(cx, cy)  # 模拟鼠标指针 传送到指定坐标
+    win32api.SendMessage(hwnd, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position)  # 模拟鼠标按下
+    win32api.SendMessage(hwnd, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)  # 模拟鼠标弹起
 
 
 if __name__ == "__main__":
@@ -159,6 +176,8 @@ if __name__ == "__main__":
     print('useful',son[1],son[2])
     print('class name ',win32gui.GetClassName(son[1]),win32gui.GetClassName(son[2]))
 
+    # find_shubiao(handle)
+    doClick(handle,510,474)
 #
     # if handle!=0:
     #     # 控制角色向前移动两秒
