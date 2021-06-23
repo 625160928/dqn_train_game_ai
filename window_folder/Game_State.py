@@ -2,21 +2,24 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from get_win import window_capture
-from base_algorithm import cos_similar
 from PIL import Image
-import  base_algorithm
+
 from base_algorithm import hist_similar
+from base_algorithm import cos_similar
 from base_algorithm import three_hist
 from base_algorithm import Mutual_Information
 
-SELECT=0
-FAIL=-1
-MENU=1
-GAMEING=2
-WIN=3
-PROCESSING=4
 
 
+def print_game_state(state):
+    arr=np.array(state)
+    print('np.array([')
+    for i in range(len(arr)):
+        print('[',end='')
+        for j in range(len(arr[i])):
+            print('[',arr[i][j][0],',',arr[i][j][1],',',arr[i][j][2],',',arr[i][j][3],'],',end='')
+        print('],')
+    print('])')
 
 class game_state():
     def __init__(self,window_name,reccognise,resize_h,resize_w):
@@ -219,8 +222,9 @@ class game_state():
         score_dict=dict()
         for i in self.state_list:
             # print(i,self.state_list[i])
+            plt.imshow(self.state_list[i])
+            plt.show()
             score_dict[i]=self.__get_state_simulate_score(game_state_pic,self.state_list[i])
-
 
         max_score=max( score_dict.values())
         for key in score_dict:
@@ -228,6 +232,21 @@ class game_state():
                 return key
 
         return "PROCESSING"
+
+    #target_state 只有ingame menu select 三种
+    #now_state 则是五种全齐 ingame menu select win fail
+    def change_state(self,target_state):
+        now_state=self.get_game_state()
+        if now_state==target_state:
+            return True
+
+
+
+
+        return False
+
+    def restart(self,level=None):
+        return
 
 
 if __name__ == "__main__":

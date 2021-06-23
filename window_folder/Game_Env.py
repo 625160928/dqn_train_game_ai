@@ -23,30 +23,17 @@ class game_env():
         # print(type(arr))
         return arr
 
-    def set_level(self,level):
-        return
 
     def get_game_state(self):
-        game_state_pic=self.__env.capture_part(self.__reccognise_x,self.__reccognise_y,self.__reccognise_h,self.__reccognise_w)
-        game_state_arr=np.array(game_state_pic)
+        game_state=self.__game_state.get_game_state()
 
-        return game_state_arr
+        return game_state
 
     def restart(self):
-        a=1
+        self.__game_state.restart()
 
 
 
-
-def print_game_state(state):
-    arr=np.array(state)
-    print('np.array([')
-    for i in range(len(arr)):
-        print('[',end='')
-        for j in range(len(arr[i])):
-            print('[',arr[i][j][0],',',arr[i][j][1],',',arr[i][j][2],',',arr[i][j][3],'],',end='')
-        print('],')
-    print('])')
 
 if __name__ == "__main__":
     window_name='FlashPlay'
@@ -68,7 +55,7 @@ if __name__ == "__main__":
     state=game_env0.get_game_state()
     # print(state)
     # print("------------------")
-    print(print_game_state(state))
+    # print(print_game_state(state))
 
 
     # print(np.array(state))
