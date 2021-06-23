@@ -240,6 +240,8 @@ class game_state():
         if now_state==target_state:
             return True
 
+        if now_state=="menu":
+
 
 
 
