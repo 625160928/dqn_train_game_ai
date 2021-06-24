@@ -176,8 +176,8 @@ if __name__ == "__main__":
     print('useful',son[1],son[2])
     print('class name ',win32gui.GetClassName(son[1]),win32gui.GetClassName(son[2]))
 
-    # find_shubiao(handle)
-    doClick(handle,510,474)
+    find_shubiao(handle)
+    # doClick(handle,510,474)
 #
     # if handle!=0:
     #     # 控制角色向前移动两秒

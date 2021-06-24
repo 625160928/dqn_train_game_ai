@@ -48,6 +48,22 @@ def get_child_windows(parent):
     hwndChildList = []
     win32gui.EnumChildWindows(parent, lambda hwnd, param: param.append(hwnd),  hwndChildList)
     return hwndChildList
+"""
+sustech info 
+
+handler  330148
+son  [264536, 2885026, 658160]
+jbid  330148
+330148  left, top, right, bottom 807 272 1831 1040 len  1024 -768
+264536  left, top, right, bottom 808 304 1830 1039  len  1022 -735  class  CefBrowserWindow
+2885026  left, top, right, bottom 808 304 1830 1039  len  1022 -735  class  Chrome_WidgetWin_0
+658160  left, top, right, bottom 808 304 1830 1039  len  1022 -735  class  Chrome_RenderWidgetHostHWND
+title  FlashPlay
+class name  Qt5QWindowIcon
+(807, 272, 1831, 1040) 330148
+
+"""
+
 
 def test():
     window_name='FlashPlay'
@@ -62,8 +78,10 @@ def test():
     jbid=handler
     print('jbid ',jbid)
     left, top, right, bottom = win32gui.GetWindowRect(handler)
-    print('left, top, right, bottom',left, top, right, bottom)
-
+    print(handler,' left, top, right, bottom',left, top, right, bottom,'len ',right-left,top-bottom)
+    for  i in son:
+        left, top, right, bottom = win32gui.GetWindowRect(i)
+        print(i,' left, top, right, bottom',left, top, right, bottom,' len ',right-left,top-bottom,' class ', win32gui.GetClassName(i))
     #获取标题
     title = win32gui.GetWindowText(jbid)
     print('title ',title)
@@ -97,9 +115,12 @@ def winEnumHandler(hwnd,non):
 
 if __name__ == '__main__':
 
-    win32gui.EnumWindows(winEnumHandler,None)
+    # win32gui.EnumWindows(winEnumHandler,None)
+    # window_name='FlashPlay'
+    # handle = windll.user32.FindWindowW(None, window_name)
+    # print(get_window_pos(window_name))
     # get_win()
-    # test()
+    test()
 
 
 
