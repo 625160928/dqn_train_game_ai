@@ -176,7 +176,7 @@ if __name__ == "__main__":
     print('useful',son[1],son[2])
     print('class name ',win32gui.GetClassName(son[1]),win32gui.GetClassName(son[2]))
 
-    find_shubiao(handle)
+    find_shubiao(son[1])
     # doClick(handle,510,474)
 #
     # if handle!=0:

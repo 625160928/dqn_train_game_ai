@@ -31,7 +31,7 @@ def print_game_state(state):
 class game_state():
     def __init__(self,window_name,reccognise,resize_h,resize_w):
         self.__env=window_capture(window_name,resize_h,resize_w)
-
+        self.window_name=window_name
         # self.fail=np.array([
         #     [[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],],
         #     [[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],[ 198 , 104 , 81 , 255 ],],
@@ -218,21 +218,35 @@ class game_state():
         self.state_list['menu']=self.menu
         self.state_list['win']=self.win
 
+        #关卡转换等待时间
         self.change_state_wait=0.5   #0.6最好
 
-        self.__handle=windll.user32.FindWindowW(None, window_name)
+        self.__handle= self.__choise_control_handle()
+
+        self.menu_to_select=[510,474]
+        self.ingame_to_select=[700,45]
+        self.ingame_reset=[775,50]
+        self.select_to_menu=[953,71]
+        self.fail_to_ingame=[383,346]
+        self.fail_to_select=[594,336]
+        self.level_1=[104,138]
+        self.level_24=[885,512]
+
+    def __choise_control_handle(self):
+        handle=windll.user32.FindWindowW(None, self.window_name)
         hwndChildList = []
-        win32gui.EnumChildWindows(self.__handle, lambda hwnd, param: param.append(hwnd),  hwndChildList)
+        win32gui.EnumChildWindows(handle, lambda hwnd, param: param.append(hwnd),  hwndChildList)
 
         for i in hwndChildList:
             if win32gui.GetClassName(i)=='Chrome_WidgetWin_0' :
-                self.__handle=i
-                break
+                return i
             if win32gui.GetClassName(i)=='Chrome_RenderWidgetHostHWND' :
-                self.__handle=i
-                break
+                return i
 
-    def doClick(self, cx, cy):
+
+    def doClick(self, click):
+        cx=click[0]
+        cy=click[1]
         long_position = win32api.MAKELONG(cx, cy)  # 模拟鼠标指针 传送到指定坐标
         win32api.SendMessage(self.__handle, win32con.WM_LBUTTONDOWN, win32con.MK_LBUTTON, long_position)  # 模拟鼠标按下
         win32api.SendMessage(self.__handle, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, long_position)  # 模拟鼠标弹起
@@ -263,16 +277,62 @@ class game_state():
 
         # return "PROCESSING"
 
+    #四行六列
+    def get_level_point(self,level=1):
+        derta_x=(self.level_24[0]-self.level_1[0])/5
+        derta_y=(self.level_24[1]-self.level_1[1])/3
+        j=level % 6
+        i=(level -j)/6
+        if j==0:
+            j=5
+        else:
+            j-=1
+        print(' [ ',i,j,end='] = ')
+        if level==1:
+            return self.level_1
+        if level==24:
+            return self.level_24
+        return  [self.level_1[0]+derta_x*j,self.level_1[1]+derta_y*i]
+
     #target_state 只有ingame menu select 三种
     #now_state 则是五种全齐 ingame menu select win fail
     def change_state(self, target_state, level=None, retry_times=5):
         now_state=self.get_game_state()
-        if now_state==target_state:
+        if now_state==target_state and target_state!="ingame":
             return True
+
+
         if now_state=="menu":
-            x=510
-            y=474
-            self.doClick(x,y)
+            self.doClick(self.menu_to_select)
+
+        if now_state=="fail":
+            if target_state=="ingame":
+                self.doClick(self.fail_to_ingame)
+            else:
+                self.doClick(self.fail_to_select)
+
+        if now_state=="win":
+            if target_state=="ingame":
+                self.doClick(self.fail_to_select)
+            else:
+                self.doClick(self.fail_to_ingame)
+
+
+        if now_state=="ingame":
+            if target_state =="ingame":
+                self.doClick(self.ingame_reset)
+                success=True
+                if success:
+                    return
+            else:
+                self.doClick(self.ingame_to_select)
+
+        if now_state=="select":
+            if target_state=="menu":
+                self.doClick(self.select_to_menu)
+
+
+
 
 
         time.sleep(self.change_state_wait)
@@ -286,6 +346,7 @@ class game_state():
 
 
     def restart(self,level=None):
+        self.change_state(target_state="ingame",level=level)
         return
 
 
@@ -301,9 +362,11 @@ if __name__ == "__main__":
     reccognise=[reccognise_x,reccognise_y,reccognise_h,reccognise_w]
     game_env0=game_state(window_name,reccognise,resize_h,resize_w)
 
-    print(game_env0.get_game_state())
+    # print(game_env0.get_game_state())
     # print("------------")
-    game_env0.change_state("select")
+    # game_env0.change_state("select")
     # print("------------")
-    print(game_env0.get_game_state())
+    # print(game_env0.get_game_state())
+    for i in range(1,25):
+        print(i,"--",game_env0.get_level_point(i))
 
