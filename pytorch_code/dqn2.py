@@ -14,6 +14,8 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision.transforms as T
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 #https://github.com/apachecn/pytorch-doc-zh/blob/master/docs/1.0/reinforcement_q_learning.md
 
 env = gym.make('CartPole-v0').unwrapped
@@ -23,14 +25,6 @@ is_ipython = 'inline' in matplotlib.get_backend()
 if is_ipython:
     from IPython import display
 
-plt.ion()
-
-# 如果使用gpu
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("device ",device)
-
-Transition = namedtuple('Transition',
-                        ('state', 'action', 'next_state', 'reward'))
 
 class ReplayMemory(object):
 
@@ -79,10 +73,6 @@ class DQN(nn.Module):
         x = F.relu(self.bn3(self.conv3(x)))
         return self.head(x.view(x.size(0), -1))
 
-resize = T.Compose([T.ToPILImage(),
-                    T.Resize(40, interpolation=Image.CUBIC),
-                    T.ToTensor()])
-
 def get_cart_location(screen_width):
     world_width = env.x_threshold * 2
     scale = screen_width / world_width
@@ -111,33 +101,6 @@ def get_screen():
     # 重新裁剪,加入批维度 (BCHW)
     return resize(screen).unsqueeze(0).to(device)
 
-env.reset()
-plt.figure()
-plt.imshow(get_screen().cpu().squeeze(0).permute(1, 2, 0).numpy(),
-           interpolation='none')
-plt.title('Example extracted screen')
-plt.show()
-
-BATCH_SIZE = 128
-GAMMA = 0.999
-EPS_START = 0.9
-EPS_END = 0.05
-EPS_DECAY = 200
-TARGET_UPDATE = 10
-
-#获取屏幕大小，以便我们可以根据从ai-gym返回的形状正确初始化层。这一点上的典型尺寸接近3x40x90，这是在get_screen(）中抑制和缩小的渲染缓冲区的结果。
-init_screen = get_screen()
-_, _, screen_height, screen_width = init_screen.shape
-
-policy_net = DQN(screen_height, screen_width).to(device)
-target_net = DQN(screen_height, screen_width).to(device)
-target_net.load_state_dict(policy_net.state_dict())
-target_net.eval()
-
-optimizer = optim.RMSprop(policy_net.parameters())
-memory = ReplayMemory(10000)
-
-steps_done = 0
 
 def select_action(state):
     global steps_done
@@ -152,7 +115,7 @@ def select_action(state):
     else:
         return torch.tensor([[random.randrange(2)]], device=device, dtype=torch.long)
 
-episode_durations = []
+
 
 def plot_durations():
     plt.figure(2)
@@ -194,6 +157,7 @@ def optimize_model():
 
     # 计算下一个状态的V(s_{t+1})。非最终状态下一个状态的预期操作值是基于“旧”目标网络计算的；选择max(1)[0]的最佳奖励。这是基于掩码合并的，这样当状态为最终状态时，我们将获得预期状态值或0。
     next_state_values = torch.zeros(BATCH_SIZE, device=device)
+    # print("next_state_values[non_final_mask] ",target_net(non_final_next_states).max(1)[0].detach())
     next_state_values[non_final_mask] = target_net(non_final_next_states).max(1)[0].detach()
     # 计算期望 Q 值
     expected_state_action_values = (next_state_values * GAMMA) + reward_batch
@@ -209,45 +173,93 @@ def optimize_model():
     optimizer.step()
 
 
-num_episodes = 50
-for i_episode in range(num_episodes):
-    # 初始化环境和状态
+if __name__ == '__main__':
+    plt.ion()
+
+    # 如果使用gpu
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("device ",device)
+
+    Transition = namedtuple('Transition',
+                            ('state', 'action', 'next_state', 'reward'))
+
+    resize = T.Compose([T.ToPILImage(),
+                        T.Resize(40, interpolation=Image.CUBIC),
+                        T.ToTensor()])
+
     env.reset()
-    last_screen = get_screen()
-    current_screen = get_screen()
-    state = current_screen - last_screen
-    for t in count():
-        # 选择并执行动作
-        action = select_action(state)
-        _, reward, done, _ = env.step(action.item())
-        reward = torch.tensor([reward], device=device)
+    plt.figure()
+    plt.imshow(get_screen().cpu().squeeze(0).permute(1, 2, 0).numpy(),
+               interpolation='none')
+    plt.title('Example extracted screen')
+    plt.show()
 
-        # 观察新状态
-        last_screen = current_screen
+    BATCH_SIZE = 128
+    GAMMA = 0.999
+    EPS_START = 0.9
+    EPS_END = 0.05
+    EPS_DECAY = 200
+    TARGET_UPDATE = 10
+
+    #获取屏幕大小，以便我们可以根据从ai-gym返回的形状正确初始化层。这一点上的典型尺寸接近3x40x90，这是在get_screen(）中抑制和缩小的渲染缓冲区的结果。
+    init_screen = get_screen()
+    _, _, screen_height, screen_width = init_screen.shape
+
+    policy_net = DQN(screen_height, screen_width).to(device)
+    target_net = DQN(screen_height, screen_width).to(device)
+    target_net.load_state_dict(policy_net.state_dict())
+    target_net.eval()
+
+    optimizer = optim.RMSprop(policy_net.parameters())
+    memory = ReplayMemory(10000)
+
+    steps_done = 0
+
+
+    episode_durations = []
+
+
+
+    num_episodes = 50
+    for i_episode in range(num_episodes):
+        print(i_episode)
+        # 初始化环境和状态
+        env.reset()
+        last_screen = get_screen()
         current_screen = get_screen()
-        if not done:
-            next_state = current_screen - last_screen
-        else:
-            next_state = None
+        state = current_screen - last_screen
+        for t in count():
+            # 选择并执行动作
+            action = select_action(state)
+            _, reward, done, _ = env.step(action.item())
+            reward = torch.tensor([reward], device=device)
 
-        # 在内存中储存当前参数
-        memory.push(state, action, next_state, reward)
+            # 观察新状态
+            last_screen = current_screen
+            current_screen = get_screen()
+            if not done:
+                next_state = current_screen - last_screen
+            else:
+                next_state = None
 
-        # 进入下一状态
-        state = next_state
+            # 在内存中储存当前参数
+            memory.push(state, action, next_state, reward)
 
-        # 记性一步优化 (在目标网络)
-        optimize_model()
-        if done:
-            episode_durations.append(t + 1)
-            plot_durations()
-            break
-    #更新目标网络, 复制在 DQN 中的所有权重偏差
-    if i_episode % TARGET_UPDATE == 0:
-        target_net.load_state_dict(policy_net.state_dict())
+            # 进入下一状态
+            state = next_state
 
-print('Complete')
-env.render()
-env.close()
-plt.ioff()
-plt.show()
+            # 记性一步优化 (在目标网络)
+            optimize_model()
+            if done:
+                episode_durations.append(t + 1)
+                plot_durations()
+                break
+        #更新目标网络, 复制在 DQN 中的所有权重偏差
+        if i_episode % TARGET_UPDATE == 0:
+            target_net.load_state_dict(policy_net.state_dict())
+
+    print('Complete')
+    env.render()
+    env.close()
+    plt.ioff()
+    plt.show()
