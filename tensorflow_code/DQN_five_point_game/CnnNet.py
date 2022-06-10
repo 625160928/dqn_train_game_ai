@@ -6,7 +6,7 @@ import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
 
-from DQN_five_point_game import Map
+from tensorflow_code.DQN_five_point_game import Map
 
 
 class DQN():

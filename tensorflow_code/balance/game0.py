@@ -79,7 +79,7 @@ if __name__ == "__main__":
         # 每成功保持杆平衡一次得分就加 1，最高到 500 分，
         # 目标是希望分数越高越好
         for time in range(500):
-            # print('现在是第 ',e,' 代，第 ',time,' 秒')
+            print('现在是第 ',e,' 代，第 ',time,' 秒')
             # 每一帧时，agent 根据 state 选择 action
             action = agent.act(state)
             # 这个 action 使得游戏进入下一个状态 next_state，并且拿到了奖励 reward

@@ -1,5 +1,3 @@
-import numpy as np
-import sys
 import random
 import pygame
 try:
@@ -7,9 +5,6 @@ try:
 except Exception:
     import flappy_bird_utils
 
-
-import pygame.surfarray as surfarray
-from pygame.locals import *
 from itertools import cycle
 
 FPS = 30
