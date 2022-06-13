@@ -222,7 +222,7 @@ if __name__ == '__main__':
 
     num_episodes = 50
     for i_episode in range(num_episodes):
-        print(i_episode)
+        print('i_episode ',i_episode)
         # 初始化环境和状态
         env.reset()
         last_screen = get_screen()

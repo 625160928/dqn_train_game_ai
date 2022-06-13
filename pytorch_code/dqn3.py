@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -99,35 +100,70 @@ class DQN(object):
         loss.backward()  # 误差反向传播
         self.optimizer.step()
 
+    def save_dqn_model(self,log_dir):
+        print('save model ',self.learn_step_counter)
+        state = {'eval_net_model': self.eval_net.state_dict(),'target_net_model': self.target_net.state_dict(),
+                 'optimizer': self.optimizer.state_dict(),
+                 'loss_func': self.loss_func,'memory':self.memory,'memory_counter':self.memory_counter,
+                 'learn_step_counter':self.learn_step_counter}
+        torch.save(state, log_dir)
 
-dqn = DQN()
+    def load_dqn_model(self,log_dir):
+        print('load  model ')
+        checkpoint = torch.load(log_dir)
+        self.eval_net.load_state_dict(checkpoint['eval_net_model'])
+        self.target_net.load_state_dict(checkpoint['target_net_model'])
+        self.optimizer.load_state_dict(checkpoint[ 'optimizer'])
+        self.loss_func=checkpoint['loss_func']
+        self.memory_counter=checkpoint['memory_counter']
+        self.learn_step_counter=checkpoint[ 'learn_step_counter']
+        self.memory=checkpoint['memory']
 
-print('\nCollection experience...')
-for i_episode in range(400):
-    s = env.reset()  # 得到环境的反馈，现在的状态
-    ep_r = 0
-    while True:
-        env.render()  # 环境渲染，可以看到屏幕上的环境
-        a = dqn.choose_action(s)  # 根据dqn来接受现在的状态，得到一个行为
-        s_, r, done, info = env.step(a)  # 根据环境的行为，给出一个反馈
+if __name__ == '__main__':
+    dqn = DQN()
+    print('\nCollection experience...')
+    model_path='./dqn2_mode.pth'
+    save_path='./dqn3_models/dqn3_mode_'
+    dqn.load_dqn_model(model_path)
+    train_time=[]
+    train_eff=[]
+    for i_episode in range(40000):
+        s = env.reset()  # 得到环境的反馈，现在的状态
+        ep_r = 0
+        while True:
+            env.render()  # 环境渲染，可以看到屏幕上的环境
+            a = dqn.choose_action(s)  # 根据dqn来接受现在的状态，得到一个行为
+            s_, r, done, info = env.step(a)  # 根据环境的行为，给出一个反馈
 
-        # 修改 reward, 使 DQN 快速学习
-        x, x_dot, theta, theta_dot = s_
-        r1 = (env.x_threshold - abs(x)) / env.x_threshold - 0.8
-        r2 = (env.theta_threshold_radians - abs(theta)) / env.theta_threshold_radians - 0.5
-        r = r1 + r2
+            # 修改 reward, 使 DQN 快速学习
+            x, x_dot, theta, theta_dot = s_
+            r1 = (env.x_threshold - abs(x)) / env.x_threshold - 0.8
+            r2 = (env.theta_threshold_radians - abs(theta)) / env.theta_threshold_radians - 0.5
+            r = r1 + r2
 
-        dqn.store_transition(s, a, r, s_)  # dqn存储现在的状态，行为，反馈，和环境导引的下一个状态
+            dqn.store_transition(s, a, r, s_)  # dqn存储现在的状态，行为，反馈，和环境导引的下一个状态
 
-        ep_r += r
+            ep_r += r
 
-        if dqn.memory_counter > MEMORY_CAPACITY:
-            dqn.learn()
+            if dqn.memory_counter > MEMORY_CAPACITY:
+                dqn.learn()
+                if done:
+                    print('Ep: ', i_episode,
+                          '| Ep_r: ', round(ep_r, 2))
+
             if done:
-                print('Ep: ', i_episode,
-                      '| Ep_r: ', round(ep_r, 2))
+                break
 
-        if done:
-            break
+            s = s_  # 现在的状态赋值到下一个状态上去
 
-        s = s_  # 现在的状态赋值到下一个状态上去
+
+        train_time.append(i_episode)
+        train_eff.append(ep_r)
+
+        if i_episode % 10 == 0:
+            plt.clf()
+            plt.plot(train_time,train_eff)
+            plt.pause(0.01)
+
+        if i_episode%50==0:
+            dqn.save_dqn_model(save_path+str(i_episode)+'.pth')
