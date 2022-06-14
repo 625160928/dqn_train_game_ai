@@ -11,7 +11,7 @@ class RandomActionWrapper(gym.ActionWrapper):
     def action(self, action):
         if random.random() < self.epsilon:
             print("Random!")
-            return self.env.action_space.sample()
+            return self.env.action_space.sample_memory()
         return action
 
 

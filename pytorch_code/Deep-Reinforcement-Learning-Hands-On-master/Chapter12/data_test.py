@@ -13,7 +13,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", required=True,
                         help="Category to use for training. Empty string to train on full dataset")
-    parser.add_argument("-m", "--model", required=True, help="Model name to load")
+    parser.add_argument("-m", "--models", required=True, help="Model name to load")
     args = parser.parse_args()
 
     phrase_pairs, emb_dict = data.load_data(args.data)

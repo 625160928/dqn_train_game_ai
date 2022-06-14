@@ -59,7 +59,7 @@ class CuriosityNet:
         # dynamics net
         dyn_s_, curiosity, dyn_train = self._build_dynamics_net(tfs, tfa, tfs_)
 
-        # normal RL model
+        # normal RL models
         total_reward = tf.add(curiosity, tfr, name="total_r")
         q, dqn_loss, dqn_train = self._build_dqn(tfs, tfa, total_reward, tfs_)
         return tfs, tfa, tfr, tfs_, dyn_train, dqn_train, q, curiosity

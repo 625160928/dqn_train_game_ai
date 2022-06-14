@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default=CONFIG_DEFAULT,
                         help="Configuration file for the bot, default=" + CONFIG_DEFAULT)
-    parser.add_argument("-m", "--model", required=True, help="Model to load")
+    parser.add_argument("-m", "--models", required=True, help="Model to load")
     parser.add_argument("--sample", default=False, action='store_true', help="Enable sampling mode")
     prog_args = parser.parse_args()
 

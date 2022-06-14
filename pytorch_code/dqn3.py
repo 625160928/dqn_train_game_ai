@@ -17,7 +17,7 @@ env = gym.make('CartPole-v0')
 env = env.unwrapped
 N_ACTIONS = env.action_space.n  # 小车的动作
 N_STATES = env.observation_space.shape[0]  # 实验环境的状态
-ENV_A_SHAPE = 0 if isinstance(env.action_space.sample(), int) else env.action_space.sample().shape
+ENV_A_SHAPE = 0 if isinstance(env.action_space.sample_memory(), int) else env.action_space.sample_memory().shape
 
 
 class Net(nn.Module):
@@ -101,7 +101,7 @@ class DQN(object):
         self.optimizer.step()
 
     def save_dqn_model(self,log_dir):
-        print('save model ',self.learn_step_counter)
+        print('save models ',self.learn_step_counter)
         state = {'eval_net_model': self.eval_net.state_dict(),'target_net_model': self.target_net.state_dict(),
                  'optimizer': self.optimizer.state_dict(),
                  'loss_func': self.loss_func,'memory':self.memory,'memory_counter':self.memory_counter,
@@ -109,7 +109,7 @@ class DQN(object):
         torch.save(state, log_dir)
 
     def load_dqn_model(self,log_dir):
-        print('load  model ')
+        print('load  models ')
         checkpoint = torch.load(log_dir)
         self.eval_net.load_state_dict(checkpoint['eval_net_model'])
         self.target_net.load_state_dict(checkpoint['target_net_model'])

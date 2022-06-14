@@ -19,7 +19,7 @@ if __name__ == "__main__":
     obs = env.reset()
 
     while True:
-        a = env.action_space.sample()
+        a = env.action_space.sample_memory()
         obs, reward, is_done, info = env.step([a])
         if obs[0] is None:
             print("Env is still resetting...")
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     for idx in range(100):
         time.sleep(1)
-        a = env.action_space.sample()
+        a = env.action_space.sample_memory()
         obs, reward, is_done, info = env.step([a])
         if obs[0] is None:
             print("Env is resetting...")

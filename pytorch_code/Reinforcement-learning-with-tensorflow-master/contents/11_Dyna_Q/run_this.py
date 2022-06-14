@@ -1,5 +1,5 @@
 """
-Simplest model-based RL, Dyna-Q.
+Simplest models-based RL, Dyna-Q.
 
 Red rectangle:          explorer.
 Black rectangles:       hells       [reward = -1].
@@ -25,8 +25,8 @@ def update():
             s_, r, done = env.step(a)
             RL.learn(str(s), a, r, str(s_))
 
-            # use a model to output (r, s_) by inputting (s, a)
-            # the model in dyna Q version is just like a memory replay buffer
+            # use a models to output (r, s_) by inputting (s, a)
+            # the models in dyna Q version is just like a memory replay buffer
             env_model.store_transition(str(s), a, r, s_)
             for n in range(10):     # learn 10 more times using the env_model
                 ms, ma = env_model.sample_s_a()  # ms in here is a str

@@ -57,7 +57,7 @@ class PPO(object):
         # actor
         pi, pi_params = self._build_anet('pi', trainable=True)
         oldpi, oldpi_params = self._build_anet('oldpi', trainable=False)
-        self.sample_op = tf.squeeze(pi.sample(1), axis=0)  # choosing action
+        self.sample_op = tf.squeeze(pi.sample_memory(1), axis=0)  # choosing action
         self.update_oldpi_op = [oldp.assign(p) for p, oldp in zip(pi_params, oldpi_params)]
 
         self.tfa = tf.placeholder(tf.float32, [None, A_DIM], 'action')

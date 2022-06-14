@@ -88,7 +88,7 @@ if __name__ == "__main__":
                 continue
 
             optimizer.zero_grad()
-            batch = buffer.sample(params['batch_size'])
+            batch = buffer.sample_memory(params['batch_size'])
             loss_v = common.calc_loss_dqn(batch, net, tgt_net.target_model, gamma=params['gamma'], device=device)
             loss_v.backward()
             optimizer.step()

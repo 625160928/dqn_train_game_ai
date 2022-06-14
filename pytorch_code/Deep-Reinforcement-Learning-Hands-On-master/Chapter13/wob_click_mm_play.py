@@ -29,7 +29,7 @@ def step_env(env, action):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", help="Model file to load")
+    parser.add_argument("-m", "--models", help="Model file to load")
     parser.add_argument("-n", "--name", required=True, help="Prefix to save screenshots")
     parser.add_argument("--count", type=int, default=1, help="Count of runs to play, default=1")
     parser.add_argument("--env", default=ENV_NAME, help="Environment name to solve, default=" + ENV_NAME)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     env.reset()
 
     for round_idx in range(args.count):
-        action = env.action_space.sample()
+        action = env.action_space.sample_memory()
         step_idx = 0
         while True:
             obs, reward, done, info, idle_count = step_env(env, action)

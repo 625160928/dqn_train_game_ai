@@ -13,7 +13,7 @@ ENV_ID = "MinitaurBulletEnv-v0"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", required=True, help="Model file to load")
+    parser.add_argument("-m", "--models", required=True, help="Model file to load")
     parser.add_argument("-e", "--env", default=ENV_ID, help="Environment name to use, default=" + ENV_ID)
     parser.add_argument("-r", "--record", help="If specified, sets the recording dir, default=Disabled")
     args = parser.parse_args()

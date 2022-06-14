@@ -118,7 +118,7 @@ def iterate_batches(envs, batch_size=BATCH_SIZE):
 
     while True:
         e = next(env_gen)
-        obs, reward, is_done, _ = e.step(e.action_space.sample())
+        obs, reward, is_done, _ = e.step(e.action_space.sample_memory())
         if np.mean(obs) > 0.01:
             batch.append(obs)
         if len(batch) == batch_size:

@@ -161,7 +161,7 @@ if __name__ == "__main__":
                 continue
 
             optimizer.zero_grad()
-            batch, batch_indices, batch_weights = buffer.sample(params['batch_size'], beta)
+            batch, batch_indices, batch_weights = buffer.sample_memory(params['batch_size'], beta)
             loss_v, sample_prios_v = calc_loss(batch, batch_weights, net, tgt_net.target_model,
                                                params['gamma'] ** REWARD_STEPS, device=device)
             loss_v.backward()

@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", required=True, help="Model file name")
+    parser.add_argument("-m", "--models", required=True, help="Model file name")
     parser.add_argument("-w", "--write", required=True, help="Monitor directory name")
     parser.add_argument("--cuda", default=False, action="store_true")
     parser.add_argument("--seed", type=int, default=0, help="Random seed")

@@ -4,8 +4,8 @@ The environment will return a geographic (distance) information for the arm to l
 
 The far away from blue point the less reward; touch blue r+=1; stop at blue for a while then get r=+10.
  
-You can train this RL by using LOAD = False, after training, this model will be store in the a local folder.
-Using LOAD = True to reload the trained model for playing.
+You can train this RL by using LOAD = False, after training, this models will be store in the a local folder.
+Using LOAD = True to reload the trained models for playing.
 
 You can customize this script in a way you want.
 
@@ -85,7 +85,7 @@ class ACNet(object):
                     self.a_loss = tf.reduce_mean(-self.exp_v)
 
                 with tf.name_scope('choose_a'):  # use local params to choose action
-                    self.A = tf.clip_by_value(tf.squeeze(normal_dist.sample(1), axis=0), *A_BOUND)
+                    self.A = tf.clip_by_value(tf.squeeze(normal_dist.sample_memory(1), axis=0), *A_BOUND)
                 with tf.name_scope('local_grad'):
                     self.a_params = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope + '/actor')
                     self.c_params = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope + '/critic')

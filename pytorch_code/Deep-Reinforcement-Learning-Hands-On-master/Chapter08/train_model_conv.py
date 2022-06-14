@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
             if eval_states is None:
                 print("Initial buffer populated, start training")
-                eval_states = buffer.sample(STATES_TO_EVALUATE)
+                eval_states = buffer.sample_memory(STATES_TO_EVALUATE)
                 eval_states = [np.array(transition.state, copy=False) for transition in eval_states]
                 eval_states = np.array(eval_states, copy=False)
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
                     torch.save(net.state_dict(), os.path.join(saves_path, "mean_val-%.3f.data" % mean_val))
 
             optimizer.zero_grad()
-            batch = buffer.sample(BATCH_SIZE)
+            batch = buffer.sample_memory(BATCH_SIZE)
             loss_v = common.calc_loss(batch, net, tgt_net.target_model, GAMMA ** REWARD_STEPS, device=device)
             loss_v.backward()
             optimizer.step()

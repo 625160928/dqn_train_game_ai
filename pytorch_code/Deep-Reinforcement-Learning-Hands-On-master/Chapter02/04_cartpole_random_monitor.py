@@ -10,7 +10,7 @@ if __name__ == "__main__":
     obs = env.reset()
 
     while True:
-        action = env.action_space.sample()
+        action = env.action_space.sample_memory()
         obs, reward, done, _ = env.step(action)
         total_reward += reward
         total_steps += 1

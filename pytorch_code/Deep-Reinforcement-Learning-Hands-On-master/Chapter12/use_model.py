@@ -35,7 +35,7 @@ def process_string(s, emb_dict, rev_emb_dict, net, use_sampling=False):
 if __name__ == "__main__":
     logging.basicConfig(format="%(asctime)-15s %(levelname)s %(message)s", level=logging.INFO)
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", required=True, help="Model name to load")
+    parser.add_argument("-m", "--models", required=True, help="Model name to load")
     parser.add_argument("-s", "--string", help="String to process, otherwise will loop")
     parser.add_argument("--sample", default=False, action="store_true", help="Enable sampling generation instead of argmax")
     parser.add_argument("--self", type=int, default=1, help="Enable self-loop mode with given amount of phrases.")

@@ -18,7 +18,7 @@ class Agent:
 
     def play_n_random_steps(self, count):
         for _ in range(count):
-            action = self.env.action_space.sample()
+            action = self.env.action_space.sample_memory()
             new_state, reward, is_done, _ = self.env.step(action)
             self.rewards[(self.state, action, new_state)] = reward
             self.transits[(self.state, action)][new_state] += 1

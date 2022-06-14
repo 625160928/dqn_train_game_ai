@@ -70,7 +70,7 @@ if __name__ == "__main__":
             continue
 
         # sample batch
-        batch = replay_buffer.sample(BATCH_SIZE)
+        batch = replay_buffer.sample_memory(BATCH_SIZE)
         batch_states = [exp.state for exp in batch]
         batch_actions = [exp.action for exp in batch]
         batch_targets = [calc_target(net, exp.reward, exp.last_state)

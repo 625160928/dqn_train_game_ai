@@ -61,9 +61,9 @@ class QLearningTable:
 
 class EnvModel:
     """Similar to the memory buffer in DQN, you can store past experiences in here.
-    Alternatively, the model can generate next state and reward signal accurately."""
+    Alternatively, the models can generate next state and reward signal accurately."""
     def __init__(self, actions):
-        # the simplest case is to think about the model is a memory which has all past transition information
+        # the simplest case is to think about the models is a memory which has all past transition information
         self.actions = actions
         self.database = pd.DataFrame(columns=actions, dtype=np.object)
 

@@ -4,8 +4,8 @@ The environment will return a geographic (distance) information for the arm to l
 
 The far away from blue point the less reward; touch blue r+=1; stop at blue for a while then get r=+10.
  
-You can train this RL by using LOAD = False, after training, this model will be store in the a local folder.
-Using LOAD = True to reload the trained model for playing.
+You can train this RL by using LOAD = False, after training, this models will be store in the a local folder.
+Using LOAD = True to reload the trained models for playing.
 
 You can customize this script in a way you want.
 

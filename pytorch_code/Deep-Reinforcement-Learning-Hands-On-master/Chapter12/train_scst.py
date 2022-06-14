@@ -46,7 +46,7 @@ if __name__ == "__main__":
     parser.add_argument("--data", required=True, help="Category to use for training. Empty string to train on full dataset")
     parser.add_argument("--cuda", action='store_true', default=False, help="Enable cuda")
     parser.add_argument("-n", "--name", required=True, help="Name of the run")
-    parser.add_argument("-l", "--load", required=True, help="Load model and continue in RL mode")
+    parser.add_argument("-l", "--load", required=True, help="Load models and continue in RL mode")
     parser.add_argument("--samples", type=int, default=4, help="Count of samples in prob mode")
     parser.add_argument("--disable-skip", default=False, action='store_true', help="Disable skipping of samples with high argmax BLEU")
     args = parser.parse_args()

@@ -16,7 +16,7 @@ class Agent:
         self.values = collections.defaultdict(float)
 
     def sample_env(self):
-        action = self.env.action_space.sample()
+        action = self.env.action_space.sample_memory()
         old_state = self.state
         new_state, reward, is_done, _ = self.env.step(action)
         self.state = self.env.reset() if is_done else new_state

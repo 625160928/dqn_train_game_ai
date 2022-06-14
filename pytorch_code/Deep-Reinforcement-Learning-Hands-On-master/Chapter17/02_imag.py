@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--cuda", default=False, action="store_true", help="Enable cuda")
     parser.add_argument("-n", "--name", required=True, help="Name of the run")
-    parser.add_argument("-m", "--model", required=True, help="File with model to load")
+    parser.add_argument("-m", "--models", required=True, help="File with models to load")
     args = parser.parse_args()
     device = torch.device("cuda" if args.cuda else "cpu")
 

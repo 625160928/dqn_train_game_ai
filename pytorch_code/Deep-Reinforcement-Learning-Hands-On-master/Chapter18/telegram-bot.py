@@ -142,7 +142,7 @@ This a <a href="https://en.wikipedia.org/wiki/Connect_Four">4-in-a-row</a> game 
 
 This bot understands the following commands:
 <b>/list</b> to list available pre-trained models (the higher the ID, the stronger the play)
-<b>/play MODEL_ID</b> to start the new game against the specified model
+<b>/play MODEL_ID</b> to start the new game against the specified models
 <b>/top</b> show leaderboard
 
 During the game, your moves are numbers of columns to drop the disk.
@@ -169,7 +169,7 @@ During the game, your moves are numbers of columns to drop the disk.
             return
 
         if model_id not in self.models:
-            bot.send_message(chat_id=chat_id, text="There is no such model, use /list command to get list of IDs")
+            bot.send_message(chat_id=chat_id, text="There is no such models, use /list command to get list of IDs")
             return
 
         if chat_id in self.sessions:

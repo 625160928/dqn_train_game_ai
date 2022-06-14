@@ -87,12 +87,12 @@ if __name__ == "__main__":
             if len(buffer) < params['replay_initial']:
                 continue
             if eval_states is None:
-                eval_states = buffer.sample(STATES_TO_EVALUATE)
+                eval_states = buffer.sample_memory(STATES_TO_EVALUATE)
                 eval_states = [np.array(transition.state, copy=False) for transition in eval_states]
                 eval_states = np.array(eval_states, copy=False)
 
             optimizer.zero_grad()
-            batch = buffer.sample(params['batch_size'])
+            batch = buffer.sample_memory(params['batch_size'])
             loss_v = calc_loss(batch, net, tgt_net.target_model, gamma=params['gamma'], device=device,
                                double=args.double)
             loss_v.backward()

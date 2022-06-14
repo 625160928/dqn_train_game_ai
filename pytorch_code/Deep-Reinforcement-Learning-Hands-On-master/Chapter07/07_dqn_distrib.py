@@ -205,12 +205,12 @@ if __name__ == "__main__":
                 continue
 
             if eval_states is None:
-                eval_states = buffer.sample(STATES_TO_EVALUATE)
+                eval_states = buffer.sample_memory(STATES_TO_EVALUATE)
                 eval_states = [np.array(transition.state, copy=False) for transition in eval_states]
                 eval_states = np.array(eval_states, copy=False)
 
             optimizer.zero_grad()
-            batch = buffer.sample(params['batch_size'])
+            batch = buffer.sample_memory(params['batch_size'])
 
             save_prefix = None
             if SAVE_TRANSITIONS_IMG:

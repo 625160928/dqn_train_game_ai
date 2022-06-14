@@ -4,8 +4,8 @@ Car has 5 sensors to obtain distance information.
 
 Car collision => reward = -1, otherwise => reward = 0.
  
-You can train this RL by using LOAD = False, after training, this model will be store in the a local folder.
-Using LOAD = True to reload the trained model for playing.
+You can train this RL by using LOAD = False, after training, this models will be store in the a local folder.
+Using LOAD = True to reload the trained models for playing.
 
 You can customize this script in a way you want.
 

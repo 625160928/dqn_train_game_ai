@@ -63,7 +63,7 @@ class Agent:
         done_reward = None
 
         if np.random.random() < epsilon:
-            action = env.action_space.sample()
+            action = env.action_space.sample_memory()
         else:
             state_a = np.array([self.state], copy=False)
             state_v = torch.tensor(state_a).to(device)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             if best_mean_reward is None or best_mean_reward < mean_reward:
                 torch.save(net.state_dict(), args.env + "-best.dat")
                 if best_mean_reward is not None:
-                    print("Best mean reward updated %.3f -> %.3f, model saved" % (best_mean_reward, mean_reward))
+                    print("Best mean reward updated %.3f -> %.3f, models saved" % (best_mean_reward, mean_reward))
                 best_mean_reward = mean_reward
             if mean_reward > args.reward:
                 print("Solved in %d frames!" % frame_idx)

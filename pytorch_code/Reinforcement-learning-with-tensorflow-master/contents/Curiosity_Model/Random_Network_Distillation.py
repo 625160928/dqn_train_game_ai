@@ -64,7 +64,7 @@ class CuriosityNet:
         # predictor
         ri, pred_train = self._build_predictor(tfs_, rand_encode_s_)
 
-        # normal RL model
+        # normal RL models
         q, dqn_loss, dqn_train = self._build_dqn(tfs, tfa, ri, tfr, tfs_)
         return tfs, tfa, tfr, tfs_, pred_train, dqn_train, q
 
