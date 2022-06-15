@@ -9,8 +9,10 @@ import torch.nn.functional as F
 from collections import  Counter
 from collections import deque
 import matplotlib.pyplot as plt
+import os
+import pandas as pd
+import csv
 
-USE_CUDA = torch.cuda.is_available()
 USE_CUDA=False
 #将变量放到cuda上
 Variable = lambda *args, **kwargs: autograd.Variable(*args, **kwargs).cuda() if USE_CUDA else autograd.Variable(*args, **kwargs)
@@ -102,7 +104,7 @@ class DQN(nn.Module):
         return np.concatenate(state),  action, reward, np.concatenate(next_state), done
 
     def save_dqn_model(self,log_dir):
-        print('save models ')
+        # print('save models ')
         state = {'layers': self.layers.state_dict(),
                  'capacity': self.capacity,
                  'observation_space':self.observation_space,
@@ -116,7 +118,7 @@ class DQN(nn.Module):
         torch.save(state, log_dir)
 
     def load_dqn_model(self,log_dir):
-        print('load  models ')
+        # print('load  models ')
         checkpoint = torch.load(log_dir)
         self.layers.load_state_dict(checkpoint['layers'])
         self.optimizer.load_state_dict(checkpoint[ 'optimizer'])
@@ -130,60 +132,32 @@ class DQN(nn.Module):
 
 
 
-def main():
-    env_id = "CartPole-v1"
-    env = gym.make(env_id)
-
-    observation_space = env.observation_space.shape[0]
-    action_sapce = env.action_space.n
-    capacity=1000
-    num_frames = 3000
-    epsilon_start = 0.1
-    epsilon_final = 0.01
-    epsilon_decay = 0.7
-    all_rewards = []
-    x_axis1 = []
-    save_path='./models/dqn4_model_'+"nr1010_"
-    base_count=0
-    # import os
-    # print(os.path.abspath('.'))
-
-    #要求探索率随着迭代次数增加而减小
-    epsilon_by_frame = lambda frame_idx: epsilon_final + (epsilon_start - epsilon_final) * math.exp( -1. * frame_idx / (epsilon_decay*num_frames))
-
-    model = DQN (observation_space, action_sapce,capacity)
-    if USE_CUDA:
-        model = model.cuda()
-
-    # model.load_dqn_model(save_path+str(base_count)+".pth")
-    model.load_dqn_model('./models/'+'dqn4_model_nr_2400.pth')
-
-
-    for frame_idx in range(base_count+1, num_frames + base_count+1):
+def run_model(model,times,env,draw=False):
+    total_score=0
+    for frame_idx in range(times):
         state = env.reset()
         episode_reward = 0
         count=0
         while True:
             count+=1
-            epsilon = epsilon_by_frame(frame_idx)
-            # epsilon = epsilon_final
+            epsilon = 0
 
             action = model.act(state, epsilon)
 
             next_state, reward, done, _ = env.step(action)
 
-            w1 = 1
-            w2 = 0
-            w3 = 1
-            w4 = 0
-            w = w1 + w2 + w3 + w4
+            w1=1
+            w2=1
+            w3=2
+            w4=1
+            w=w1+w2+w3+w4
 
-            r1 = np.clip(2.4 - abs(next_state[0]), 0, 2.4) / 2.4
-            r2 = np.clip(0.5 - abs(next_state[1]), 0, 0.5) / 0.5
-            r3 = np.clip(0.418 - abs(next_state[2]), 0, 0.418) / 0.418
-            r4 = np.clip(0.5 - abs(next_state[3]), 0, 0.5) / 0.5
-            new_reward = (r1 * w1 + r2 * w2 + r3 * w3 + r4 * w4) / w
 
+            r1=np.clip(2.4-abs(next_state[0]),0,2.4)/2.4
+            r2=np.clip(0.5-abs(next_state[1]),0,0.5)/0.5
+            r3=np.clip(0.418-abs(next_state[2]),0,0.418)/0.418
+            r4=np.clip(0.5-abs(next_state[3]),0,0.5)/0.5
+            new_reward=(r1*w1+r2*w2+r3*w3+r4*w4)/w
             model.push_memory(state, action, new_reward, next_state, done)
 
             # print(next_state,new_reward)
@@ -193,28 +167,114 @@ def main():
             episode_reward += new_reward
             # print(frame_idx)
 
-            # env.render()
-
+            if draw:
+                env.render()
 
             if done:
                 break
+        total_score+=count
+        # print(count,episode_reward)
+    return total_score
+
+'''
+['dqn4_model_nr_2500.pth', 40065]
+['dqn4_model_nr1131_2000.pth', 40901]
+['dqn4_model_nr_4000.pth', 43761]
+['dqn4_model_nr_1200.pth', 43863]
+['dqn4_model_nr1131_1900.pth', 44654]
+['dqn4_model_nr_2400.pth', 46469]
+
+['dqn4_model_nr1131_1900.pth', 50000]
+['dqn4_model_nr_2400.pth', 50000]
+
+'''
+def save_file(dict_map,col,file_path):
+    pd.DataFrame(data=dict_map, columns=col).to_csv(file_path , index=False)
+
+def load_file(col,file_path):
+    dim=dict()
+    with open(file_path, "r") as csvfile:
+        reader = csv.reader(csvfile)
+        for line in reader:
+            if  line==col:
+                continue
+            dim[line[0]]=float(line[1])
+    # print(dim)
+    return dim
+
+def try_all():
+    env_id = "CartPole-v1"
+    env = gym.make(env_id)
+
+    observation_space = env.observation_space.shape[0]
+    action_sapce = env.action_space.n
+    capacity=1000
+    test_times=100
+
+    src_path="./models/"
+    save_path=src_path+'anylize_map.csv'
+    col=['name','live_time']
+    files_path=os.listdir(src_path)
+
+    model_jdu=[]
+
+    dict_map=load_file(col,save_path)
 
 
 
-        x_axis1.append(frame_idx)
-        all_rewards.append(episode_reward)
+    for model_path in files_path:
+        k=model_path.split('.')
+        if k[1]!='pth':
+            continue
 
-        # if frame_idx==1:
-        #     model.save_dqn_model(save_path + str(frame_idx) + '.pth')
 
-        if frame_idx%100==0:
-            model.save_dqn_model(save_path+str(frame_idx)+'.pth')
+        if model_path in dict_map:
+            score=dict_map[model_path]
+        else:
+            model = DQN (observation_space, action_sapce,capacity)
+            if USE_CUDA:
+                model = model.cuda()
+            model.load_dqn_model(src_path+model_path)
+            score=run_model(model,test_times,env)
+            dict_map[model_path]=score
+            save_file(model_jdu,col,save_path)
 
-        print('id= ',frame_idx,' live_time= ' ,count,' reward= ',episode_reward)
-        # if frame_idx % 10 == 0:
-        #     plt.scatter(x_axis1, all_rewards,color="blue")
-        #     #plt.plot(x_axis1, losses)
-        #     plt.pause(0.01)
+        model_jdu.append([model_path,score])
+
+
+
+        print(model_path,score,score/test_times)
+
+        # load_file(col,save_path)
+
+    print("=====================")
+    model_jdu.sort(key=lambda x:x[1])
+    for m in model_jdu:
+        print(m)
+
+def try_once(model_path):
+    env_id = "CartPole-v1"
+    env = gym.make(env_id)
+
+    observation_space = env.observation_space.shape[0]
+    action_sapce = env.action_space.n
+    capacity = 1000
+    test_times = 100
+
+
+    model = DQN(observation_space, action_sapce, capacity)
+    if USE_CUDA:
+        model = model.cuda()
+
+    model.load_dqn_model(model_path)
+
+    score = run_model(model, test_times, env,draw=True)
+
+
+def main():
+    # try_all()
+    try_once('./models/'+'dqn4_model_nr1131_1900.pth')
+
 
 if __name__ == '__main__':
     main()
