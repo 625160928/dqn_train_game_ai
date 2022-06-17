@@ -134,7 +134,7 @@ class NormalizedActions(gym.ActionWrapper):
         return action
 
 class DDPG(object):
-    def __init__(self, action_dim, state_dim, hidden_dim):
+    def __init__(self,action_dim, state_dim, hidden_dim):
         super(DDPG,self).__init__()
         self.action_dim, self.state_dim, self.hidden_dim = action_dim, state_dim, hidden_dim
         self.batch_size = 128
@@ -145,6 +145,7 @@ class DDPG(object):
         self.replay_buffer_size = 5000
         self.value_lr = 1e-3
         self.policy_lr = 1e-4
+
 
         self.value_net = ValueNetwork(state_dim, action_dim, hidden_dim).to(device)
         self.policy_net = PolicyNetwork(state_dim, action_dim, hidden_dim).to(device)
@@ -164,6 +165,62 @@ class DDPG(object):
         self.value_criterion = nn.MSELoss()
 
         self.replay_buffer = ReplayBuffer(self.replay_buffer_size)
+
+    def save_model(self,log_dir):
+        print('save models ')
+        state = {'self.action_dim': self.action_dim,
+                 'self.state_dim': self.state_dim,
+                 'self.hidden_dim': self.hidden_dim,
+                 'self.batch_size':self.batch_size,
+                 'self.gamma':self.gamma,
+                 'self.min_value': self.min_value,
+                 'self.max_value':self.max_value,
+                 'self.soft_tau':self.soft_tau,
+                 'self.replay_buffer_size':self.replay_buffer_size,
+                 'self.value_lr':self.value_lr,
+                 'self.policy_lr':self.policy_lr,
+
+                 'self.value_net': self.value_net.state_dict(),
+                 'self.policy_net': self.policy_net.state_dict(),
+                 'self.target_value_net': self.target_value_net.state_dict(),
+                 'self.target_policy_net':self.target_policy_net.state_dict(),
+                 'self.value_optimizer': self.value_optimizer.state_dict(),
+                 'self.policy_optimizer':self.policy_optimizer.state_dict(),
+
+                 'self.value_criterion': self.value_criterion.state_dict(),
+                 'self.replay_buffer':self.replay_buffer
+                 }
+        torch.save(state, log_dir)
+
+    def load_model(self,log_dir):
+        print('load  models ')
+        checkpoint = torch.load(log_dir)
+        self.action_dim=checkpoint['self.action_dim']
+        self.state_dim=checkpoint['self.state_dim']
+        self.hidden_dim=checkpoint['self.hidden_dim']
+        self.batch_size=checkpoint['self.batch_size']
+        self.gamma=checkpoint['self.gamma']
+        self.min_value=checkpoint['self.min_value']
+        self.max_value=checkpoint['self.max_value']
+        self.soft_tau=checkpoint['self.soft_tau']
+        self.replay_buffer_size=checkpoint['self.replay_buffer_size']
+        self.value_lr=checkpoint['self.value_lr']
+        self.policy_lr=checkpoint['self.policy_lr']
+
+
+        self.value_net.load_state_dict(checkpoint['self.value_net'])
+        self.policy_net.load_state_dict(checkpoint['self.policy_net'])
+        self.target_value_net.load_state_dict(checkpoint['self.target_value_net'])
+        self.target_policy_net.load_state_dict(checkpoint['self.target_policy_net'])
+        self.value_optimizer.load_state_dict(checkpoint['self.value_optimizer'])
+        self.policy_optimizer.load_state_dict(checkpoint['self.policy_optimizer'])
+        self.value_criterion.load_state_dict(checkpoint['self.value_criterion'])
+
+
+        self.replay_buffer=checkpoint['self.replay_buffer']
+
+
+
 
     def ddpg_update(self):
         state, action, reward, next_state, done = self.replay_buffer.sample(self.batch_size)
@@ -203,16 +260,22 @@ class DDPG(object):
                 target_param.data * (1.0 - self.soft_tau) + param.data * self.soft_tau
             )
 
+    def push_memory(self,state, action, reward, next_state, done):
+        self.replay_buffer.push(state, action, reward, next_state, done)
+        if len(self.replay_buffer) > self.batch_size:
+            self.ddpg_update()
+
+
 def plot(frame_idx, rewards):
-    plt.figure(figsize=(20,5))
-    plt.subplot(131)
-    plt.title('frame %s. reward: %s' % (frame_idx, rewards[-1]))
+    # plt.figure(figsize=(20,5))
+    # plt.subplot(131)
+    # plt.title('frame %s. reward: %s' % (frame_idx, rewards[-1]))
     plt.plot(rewards)
     plt.pause(0.01)
 
 
 def main(show=True):
-    env = gym.make("Pendulum-v1")
+    env = gym.make("Pendulum-v0")
     env = NormalizedActions(env)
 
     ou_noise = OUNoise(env.action_space)
@@ -227,7 +290,8 @@ def main(show=True):
     max_steps = 1000
     frame_idx = 0
     rewards = []
-    batch_size = 128
+    save_path='./models/ddpg_model_'
+
 
     while frame_idx < max_frames:
         frame_idx += 1
@@ -236,23 +300,28 @@ def main(show=True):
         episode_reward = 0
 
         for step in range(max_steps):
-            if show:
+            if show and frame_idx>250:
                 env.render()
             action = ddpg.policy_net.get_action(state)
-            action = ou_noise.get_action(action, step)
+            # print('1 ',action,type(action))
+            # action = ou_noise.get_action(action, step)
+            action=np.array([action])
+            # print('2 ' ,action,type(action))
+
             next_state, reward, done, _ = env.step(action)
 
-            ddpg.replay_buffer.push(state, action, reward, next_state, done)
-            if len(ddpg.replay_buffer) > batch_size:
-                ddpg.ddpg_update()
+            ddpg.push_memory(state, action, reward, next_state, done)
 
             state = next_state
             episode_reward += reward
 
 
             if done:
+                # print("break ")
                 break
 
+        if frame_idx%50==0:
+            ddpg.save_model(save_path+str(frame_idx)+'.pth')
         rewards.append(episode_reward)
         print(frame_idx,episode_reward)
         if frame_idx % 30 == 0:
@@ -260,4 +329,5 @@ def main(show=True):
     env.close()
 
 if __name__ == '__main__':
-    main(show=False)
+    main(show=True)
+    # main(show=False)
