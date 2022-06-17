@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 USE_CUDA = torch.cuda.is_available()
 # USE_CUDA=False
 
+# USE_CUDA=False
 #将变量放到cuda上
 Variable = lambda *args, **kwargs: autograd.Variable(*args, **kwargs).cuda() if USE_CUDA else autograd.Variable(*args, **kwargs)
 
