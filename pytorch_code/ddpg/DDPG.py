@@ -291,7 +291,9 @@ def main(show=True):
     frame_idx = 0
     rewards = []
     save_path='./models/ddpg_model_'
+    base_index=300
 
+    ddpg.load_model(save_path+'300.pth')
 
     while frame_idx < max_frames:
         frame_idx += 1
@@ -300,13 +302,12 @@ def main(show=True):
         episode_reward = 0
 
         for step in range(max_steps):
-            if show and frame_idx>250:
+            if show and frame_idx>0:
                 env.render()
             action = ddpg.policy_net.get_action(state)
-            # print('1 ',action,type(action))
+
             # action = ou_noise.get_action(action, step)
             action=np.array([action])
-            # print('2 ' ,action,type(action))
 
             next_state, reward, done, _ = env.step(action)
 
@@ -321,7 +322,7 @@ def main(show=True):
                 break
 
         if frame_idx%50==0:
-            ddpg.save_model(save_path+str(frame_idx)+'.pth')
+            ddpg.save_model(save_path+str(frame_idx+base_index)+'.pth')
         rewards.append(episode_reward)
         print(frame_idx,episode_reward)
         if frame_idx % 30 == 0:
