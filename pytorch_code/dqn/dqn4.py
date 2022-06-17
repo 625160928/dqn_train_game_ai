@@ -11,7 +11,7 @@ from collections import deque
 import matplotlib.pyplot as plt
 
 USE_CUDA = torch.cuda.is_available()
-USE_CUDA=False
+# USE_CUDA=False
 #将变量放到cuda上
 Variable = lambda *args, **kwargs: autograd.Variable(*args, **kwargs).cuda() if USE_CUDA else autograd.Variable(*args, **kwargs)
 
@@ -138,25 +138,26 @@ def main():
     action_sapce = env.action_space.n
     capacity=1000
     num_frames = 3000
-    epsilon_start = 0.1
+    epsilon_start = 1.0
     epsilon_final = 0.01
-    epsilon_decay = 0.7
+    epsilon_decay = 500
     all_rewards = []
     x_axis1 = []
-    save_path='./models/dqn4_model_'+"nr1010_"
-    base_count=0
-    # import os
-    # print(os.path.abspath('.'))
+    save_path='./dqn/models/dqn4_model_'+"nr1131_"
+    base_count=4100
+
+    import os
+    print(os.path.abspath('.'))
 
     #要求探索率随着迭代次数增加而减小
-    epsilon_by_frame = lambda frame_idx: epsilon_final + (epsilon_start - epsilon_final) * math.exp( -1. * frame_idx / (epsilon_decay*num_frames))
+    epsilon_by_frame = lambda frame_idx: epsilon_final + (epsilon_start - epsilon_final) * math.exp( -1. * frame_idx / epsilon_decay)
 
     model = DQN (observation_space, action_sapce,capacity)
     if USE_CUDA:
+        print("use cuda")
         model = model.cuda()
 
-    # model.load_dqn_model(save_path+str(base_count)+".pth")
-    model.load_dqn_model('./models/'+'dqn4_model_nr_2400.pth')
+    model.load_dqn_model("./models/dqn4_model_nr_2400.pth")
 
 
     for frame_idx in range(base_count+1, num_frames + base_count+1):
@@ -166,24 +167,17 @@ def main():
         while True:
             count+=1
             epsilon = epsilon_by_frame(frame_idx)
-            # epsilon = epsilon_final
+            epsilon = 0
 
             action = model.act(state, epsilon)
 
             next_state, reward, done, _ = env.step(action)
 
-            w1 = 1
-            w2 = 0
-            w3 = 1
-            w4 = 0
-            w = w1 + w2 + w3 + w4
-
-            r1 = np.clip(2.4 - abs(next_state[0]), 0, 2.4) / 2.4
-            r2 = np.clip(0.5 - abs(next_state[1]), 0, 0.5) / 0.5
-            r3 = np.clip(0.418 - abs(next_state[2]), 0, 0.418) / 0.418
-            r4 = np.clip(0.5 - abs(next_state[3]), 0, 0.5) / 0.5
-            new_reward = (r1 * w1 + r2 * w2 + r3 * w3 + r4 * w4) / w
-
+            r1=np.clip(2.4-abs(next_state[0]),0,2.4)/2.4
+            r2=np.clip(0.5-abs(next_state[1]),0,0.5)/0.5
+            r3=np.clip(0.418-abs(next_state[2]),0,0.418)/0.418
+            r4=np.clip(0.5-abs(next_state[3]),0,0.5)/0.5
+            new_reward=(r1+r2+r3*3+r4)/6
             model.push_memory(state, action, new_reward, next_state, done)
 
             # print(next_state,new_reward)
@@ -207,8 +201,8 @@ def main():
         # if frame_idx==1:
         #     model.save_dqn_model(save_path + str(frame_idx) + '.pth')
 
-        if frame_idx%100==0:
-            model.save_dqn_model(save_path+str(frame_idx)+'.pth')
+        # if frame_idx%100==0:
+        #     model.save_dqn_model(save_path+str(frame_idx)+'.pth')
 
         print('id= ',frame_idx,' live_time= ' ,count,' reward= ',episode_reward)
         # if frame_idx % 10 == 0:
@@ -217,4 +211,5 @@ def main():
         #     plt.pause(0.01)
 
 if __name__ == '__main__':
+    # torch.zeros(1).cuda()
     main()
