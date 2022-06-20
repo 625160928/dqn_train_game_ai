@@ -303,7 +303,8 @@ def main(show=True):
 
         for step in range(max_steps):
             if show and frame_idx>0:
-                env.render()
+                image=env.render()
+                # print(type(image))
             action = ddpg.policy_net.get_action(state)
 
             # action = ou_noise.get_action(action, step)
@@ -321,12 +322,12 @@ def main(show=True):
                 # print("break ")
                 break
 
-        if frame_idx%50==0:
-            ddpg.save_model(save_path+str(frame_idx+base_index)+'.pth')
+        # if frame_idx%50==0:
+        #     ddpg.save_model(save_path+str(frame_idx+base_index)+'.pth')
         rewards.append(episode_reward)
         print(frame_idx,episode_reward)
-        if frame_idx % 30 == 0:
-            plot(frame_idx, rewards)
+        # if frame_idx % 30 == 0:
+        #     plot(frame_idx, rewards)
     env.close()
 
 if __name__ == '__main__':

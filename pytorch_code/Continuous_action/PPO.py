@@ -155,6 +155,7 @@ def main():
     ############## Hyperparameters ##############
     env_name = "BipedalWalker-v3"
     render = False
+    render = True
     solved_reward = 300  # stop training if avg_reward > solved_reward
     log_interval = 20  # print avg reward in the interval
     max_episodes = 10000  # max training episodes
@@ -170,9 +171,11 @@ def main():
     betas = (0.9, 0.999)
 
     random_seed = None
+
     #############################################
 
     # creating environment
+
     env = gym.make(env_name)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.shape[0]

@@ -117,7 +117,7 @@ class DQN(nn.Module):
                  }
         torch.save(state, log_dir)
 
-    def load_dqn_model(self,log_dir):
+    def load_model(self, log_dir):
         print('load  models ')
         checkpoint = torch.load(log_dir)
         self.layers.load_state_dict(checkpoint['layers'])
@@ -158,7 +158,7 @@ def main():
         model = model.cuda()
 
     # model.load_dqn_model(save_path+str(base_count)+".pth")
-    model.load_dqn_model('./models/'+'dqn4_model_nr_2400.pth')
+    model.load_model('./models/' + 'dqn4_model_nr_2400.pth')
 
 
     for frame_idx in range(base_count+1, num_frames + base_count+1):
